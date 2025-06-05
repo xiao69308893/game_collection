@@ -1,0 +1,693 @@
+name: CI/CD Pipeline
+
+# 触发条件
+on:
+  push:
+    branches: [ main, develop ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      deploy_environment:
+        description: 'Deploy to environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+# 环境变量
+env:
+  NODE_VERSION: '18'
+  PNPM_VERSION: '8'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+# 作业定义
+jobs:
+  # ==========================================
+  # 代码质量检查
+  # ==========================================
+  lint-and-test:
+    name: 代码质量检查
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 类型检查
+        run: pnpm run type-check
+
+      - name: 代码格式检查
+        run: pnpm run format:check
+
+      - name: ESLint 检查
+        run: pnpm run lint
+
+      - name: 单元测试
+        run: pnpm run test:unit
+        env:
+          CI: true
+
+      - name: 测试覆盖率
+        run: pnpm run test:coverage
+
+      - name: 上传性能测试结果
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance-results
+          path: perf-results.json
+
+  # ==========================================
+  # 清理工作
+  # ==========================================
+  cleanup:
+    name: 清理资源
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, deploy-production]
+    if: always()
+
+    steps:
+      - name: 清理旧的 Docker 镜像
+        uses: actions/delete-package-versions@v4
+        with:
+          package-name: ${{ env.IMAGE_NAME }}
+          package-type: 'container'
+          min-versions-to-keep: 10
+          delete-only-untagged-versions: true
+
+      - name: 清理旧的工作流运行记录
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 30
+          keep_minimum_runs: 10
+
+---
+# .github/workflows/release.yml - 发布流水线
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: 创建发布
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 生成变更日志
+        id: changelog
+        uses: TriPSs/conventional-changelog-action@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          output-file: 'CHANGELOG.md'
+
+      - name: 创建 GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: ${{ steps.changelog.outputs.clean_changelog }}
+          draft: false
+          prerelease: false
+
+      - name: 构建 Tauri 应用
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: 'Game Collection v__VERSION__'
+          releaseBody: 'See the assets to download this version and install.'
+          releaseDraft: false
+          prerelease: false
+
+---
+# .github/workflows/dependency-update.yml - 依赖更新
+name: Dependency Update
+
+on:
+  schedule:
+    - cron: '0 2 * * 1'  # 每周一凌晨2点
+  workflow_dispatch:
+
+jobs:
+  update-dependencies:
+    name: 更新依赖
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: 更新 npm 依赖
+        run: |
+          npx npm-check-updates -u
+          npm install
+
+      - name: 运行测试
+        run: npm test
+
+      - name: 创建 Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update dependencies'
+          title: '自动更新依赖包'
+          body: |
+            ## 🔄 自动依赖更新
+            
+            此 PR 由 GitHub Actions 自动创建，包含以下更新：
+            
+            - 更新所有可用的依赖包到最新版本
+            - 自动运行测试确保兼容性
+            
+            请仔细检查更新内容并测试功能是否正常。
+          branch: auto-dependency-update
+          delete-branch: true
+
+---
+# .github/workflows/codeql-analysis.yml - 代码安全分析
+name: CodeQL Analysis
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 6 * * 1'
+
+jobs:
+  analyze:
+    name: 代码安全分析
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript' ]
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 初始化 CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: 自动构建
+        uses: github/codeql-action/autobuild@v2
+
+      - name: 执行 CodeQL 分析
+        uses: github/codeql-action/analyze@v2
+
+---
+# .github/workflows/labeler.yml - 自动标签
+name: Labeler
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  label:
+    name: 自动标签
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 应用标签
+        uses: actions/labeler@v4
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/labeler.yml
+
+---
+# .github/workflows/stale.yml - 清理过期 Issues 和 PR
+name: Stale Issues and PRs
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  stale:
+    name: 清理过期项目
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 处理过期项目
+        uses: actions/stale@v8
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          stale-issue-message: |
+            此 issue 由于 60 天内没有活动被标记为过期。
+            如果仍然相关，请评论说明，否则将在 7 天后关闭。
+          stale-pr-message: |
+            此 PR 由于 30 天内没有活动被标记为过期。
+            如果仍然需要，请更新并说明，否则将在 7 天后关闭。
+          stale-issue-label: 'stale'
+          stale-pr-label: 'stale'
+          days-before-issue-stale: 60
+          days-before-pr-stale: 30
+          days-before-issue-close: 7
+          days-before-pr-close: 7
+          exempt-issue-labels: 'pinned,security,bug'
+          exempt-pr-labels: 'pinned,security'覆盖率报告
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+  # ==========================================
+  # 构建应用
+  # ==========================================
+  build:
+    name: 构建应用
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+
+    strategy:
+      matrix:
+        environment: [development, staging, production]
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 设置环境变量
+        run: |
+          if [ "${{ matrix.environment }}" = "production" ]; then
+            echo "VITE_MODE=production" >> $GITHUB_ENV
+            echo "VITE_API_BASE_URL=https://api.gamecollection.com/api" >> $GITHUB_ENV
+          elif [ "${{ matrix.environment }}" = "staging" ]; then
+            echo "VITE_MODE=staging" >> $GITHUB_ENV
+            echo "VITE_API_BASE_URL=https://staging-api.gamecollection.com/api" >> $GITHUB_ENV
+          else
+            echo "VITE_MODE=development" >> $GITHUB_ENV
+            echo "VITE_API_BASE_URL=https://dev-api.gamecollection.com/api" >> $GITHUB_ENV
+          fi
+
+      - name: 构建应用
+        run: pnpm run build
+        env:
+          NODE_ENV: ${{ matrix.environment }}
+
+      - name: 构建报告
+        run: pnpm run build:analyze
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-${{ matrix.environment }}
+          path: dist/
+          retention-days: 30
+
+      - name: 上传构建报告
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-report-${{ matrix.environment }}
+          path: dist/report.html
+          retention-days: 7
+
+  # ==========================================
+  # 端到端测试
+  # ==========================================
+  e2e-test:
+    name: 端到端测试
+    runs-on: ubuntu-latest
+    needs: build
+
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 下载构建产物
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-development
+          path: dist/
+
+      - name: 启动应用服务器
+        run: |
+          npx serve -s dist -l 3000 &
+          echo "SERVER_PID=$!" >> $GITHUB_ENV
+
+      - name: 等待服务器启动
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:3000; do sleep 1; done'
+
+      - name: 运行 Cypress 测试
+        uses: cypress-io/github-action@v6
+        with:
+          browser: chrome
+          headless: true
+          config: baseUrl=http://localhost:3000
+          spec: cypress/e2e/**/*.cy.{js,jsx,ts,tsx}
+
+      - name: 上传测试截图
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots/
+
+      - name: 上传测试视频
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: cypress-videos
+          path: cypress/videos/
+
+  # ==========================================
+  # 安全扫描
+  # ==========================================
+  security-scan:
+    name: 安全扫描
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 运行 Trivy 漏洞扫描
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: 上传扫描结果到 GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: npm 依赖审计
+        run: npm audit --audit-level=high
+
+  # ==========================================
+  # Docker 镜像构建
+  # ==========================================
+  docker-build:
+    name: Docker 镜像构建
+    runs-on: ubuntu-latest
+    needs: [lint-and-test, build]
+    if: github.event_name != 'pull_request'
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 登录容器注册表
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 提取元数据
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: 构建并推送 Docker 镜像
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NODE_ENV=production
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            VCS_REF=${{ github.sha }}
+
+  # ==========================================
+  # 部署到 Staging
+  # ==========================================
+  deploy-staging:
+    name: 部署到 Staging
+    runs-on: ubuntu-latest
+    needs: [e2e-test, security-scan, docker-build]
+    if: github.ref == 'refs/heads/develop' || github.event.inputs.deploy_environment == 'staging'
+    environment: staging
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 部署到 Staging 环境
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          script: |
+            cd /opt/game-collection
+            git pull origin develop
+            docker-compose -f docker-compose.yml -f docker-compose.staging.yml pull
+            docker-compose -f docker-compose.yml -f docker-compose.staging.yml up -d
+            docker system prune -f
+
+      - name: 健康检查
+        run: |
+          sleep 30
+          curl -f ${{ secrets.STAGING_URL }}/health || exit 1
+
+      - name: 通知部署结果
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        if: always()
+
+  # ==========================================
+  # 部署到 Production
+  # ==========================================
+  deploy-production:
+    name: 部署到 Production
+    runs-on: ubuntu-latest
+    needs: [e2e-test, security-scan, docker-build]
+    if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.deploy_environment == 'production'
+    environment: production
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 创建部署
+        uses: actions/github-script@v6
+        id: deployment
+        with:
+          script: |
+            const deployment = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha,
+              environment: 'production',
+              description: 'Deploy to production',
+              auto_merge: false
+            });
+            return deployment.data.id;
+
+      - name: 更新部署状态为进行中
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: ${{ steps.deployment.outputs.result }},
+              state: 'in_progress',
+              description: 'Deployment started'
+            });
+
+      - name: 部署到 Production 环境
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.PRODUCTION_USER }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          script: |
+            cd /opt/game-collection
+            git pull origin main
+            docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull
+            docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --remove-orphans
+            docker system prune -f
+
+      - name: 生产环境健康检查
+        run: |
+          sleep 60
+          for i in {1..5}; do
+            if curl -f ${{ secrets.PRODUCTION_URL }}/health; then
+              echo "Health check passed"
+              break
+            fi
+            echo "Health check failed, attempt $i/5"
+            sleep 30
+          done
+
+      - name: 更新部署状态为成功
+        uses: actions/github-script@v6
+        if: success()
+        with:
+          script: |
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: ${{ steps.deployment.outputs.result }},
+              state: 'success',
+              description: 'Deployment successful',
+              environment_url: '${{ secrets.PRODUCTION_URL }}'
+            });
+
+      - name: 更新部署状态为失败
+        uses: actions/github-script@v6
+        if: failure()
+        with:
+          script: |
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: ${{ steps.deployment.outputs.result }},
+              state: 'failure',
+              description: 'Deployment failed'
+            });
+
+      - name: 创建 GitHub Release
+        uses: actions/create-release@v1
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+  # ==========================================
+  # 性能测试
+  # ==========================================
+  performance-test:
+    name: 性能测试
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    if: github.ref == 'refs/heads/develop'
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          urls: |
+            ${{ secrets.STAGING_URL }}
+            ${{ secrets.STAGING_URL }}/games
+            ${{ secrets.STAGING_URL }}/games/tetris
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: 性能基准测试
+        run: |
+          npx autocannon ${{ secrets.STAGING_URL }} -c 10 -d 30 --json > perf-results.json
+
+      - name: 上传
