@@ -21,68 +21,16 @@ export default defineConfig({
     }),
     VitePWA({
       registerType: 'autoUpdate',
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 年
-              },
-              cacheKeyWillBeUsed: async ({ request }) => {
-                return `${request.url}?version=1`
-              }
-            }
-          },
-          {
-            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'gstatic-fonts-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 年
-              }
-            }
-          },
-          {
-            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'images-cache',
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 天
-              }
-            }
-          },
-          {
-            urlPattern: /\.(?:js|css)$/,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'static-resources-cache'
-            }
-          }
-        ]
-      },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        name: 'Game Collection',
-        short_name: 'GameCollection',
-        description: '经典游戏集合应用，包含俄罗斯方块、贪吃蛇、拼图和记忆游戏',
+        name: '游戏集合',
+        short_name: 'Game Collection',
+        description: '多平台游戏集合应用',
         theme_color: '#3b82f6',
         background_color: '#ffffff',
         display: 'standalone',
-        orientation: 'any',
-        scope: '/',
+        orientation: 'portrait',
         start_url: '/',
-        categories: ['games', 'entertainment'],
-        lang: 'zh-CN',
-        dir: 'ltr',
         icons: [
           {
             src: 'pwa-192x192.png',
@@ -100,71 +48,35 @@ export default defineConfig({
             type: 'image/png',
             purpose: 'any maskable'
           }
-        ],
-        shortcuts: [
+        ]
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        runtimeCaching: [
           {
-            name: '俄罗斯方块',
-            short_name: 'Tetris',
-            description: '经典俄罗斯方块游戏',
-            url: '/games/tetris',
-            icons: [
-              {
-                src: 'icons/tetris-96x96.png',
-                sizes: '96x96'
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // 365 days
+              },
+              cacheKeyWillBeUsed: async ({ request }) => {
+                return `${request.url}?${Date.now()}`
               }
-            ]
+            }
           },
           {
-            name: '贪吃蛇',
-            short_name: 'Snake',
-            description: '经典贪吃蛇游戏',
-            url: '/games/snake',
-            icons: [
-              {
-                src: 'icons/snake-96x96.png',
-                sizes: '96x96'
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'gstatic-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // 365 days
               }
-            ]
-          },
-          {
-            name: '拼图游戏',
-            short_name: 'Puzzle',
-            description: '拼图挑战游戏',
-            url: '/games/puzzle',
-            icons: [
-              {
-                src: 'icons/puzzle-96x96.png',
-                sizes: '96x96'
-              }
-            ]
-          },
-          {
-            name: '记忆翻牌',
-            short_name: 'Memory',
-            description: '记忆力挑战游戏',
-            url: '/games/memory',
-            icons: [
-              {
-                src: 'icons/memory-96x96.png',
-                sizes: '96x96'
-              }
-            ]
-          }
-        ],
-        screenshots: [
-          {
-            src: 'screenshots/desktop-1.png',
-            sizes: '1280x720',
-            type: 'image/png',
-            form_factor: 'wide',
-            label: '游戏主界面'
-          },
-          {
-            src: 'screenshots/mobile-1.png',
-            sizes: '375x667',
-            type: 'image/png',
-            form_factor: 'narrow',
-            label: '移动端游戏界面'
+            }
           }
         ]
       },
@@ -183,13 +95,40 @@ export default defineConfig({
       '@assets': resolve(__dirname, 'src/assets')
     }
   },
+  define: {
+    __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+    __DEV__: JSON.stringify(process.env.NODE_ENV === 'development'),
+    __PROD__: JSON.stringify(process.env.NODE_ENV === 'production')
+  },
   server: {
     port: 5173,
-    host: true
+    host: true,
+    open: true
   },
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    sourcemap: true
+    sourcemap: process.env.NODE_ENV === 'development',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: process.env.NODE_ENV === 'production',
+        drop_debugger: process.env.NODE_ENV === 'production'
+      }
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vue: ['vue', 'vue-router', 'pinia'],
+          ui: ['vue-i18n'],
+          game: ['phaser'],
+          utils: ['lodash-es']
+        }
+      }
+    }
+  },
+  optimizeDeps: {
+    include: ['vue', 'vue-router', 'pinia', 'vue-i18n', 'phaser']
   }
 })

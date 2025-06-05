@@ -12,6 +12,7 @@ declare global {
   const EventLogger: typeof import('./utils/eventBus')['EventLogger']
   const GameDataStorage: typeof import('./utils/storage')['GameDataStorage']
   const GameEventManager: typeof import('./utils/eventBus')['GameEventManager']
+  const PWAManager: typeof import('./utils/pwaUtils')['PWAManager']
   const StorageManager: typeof import('./utils/storage')['StorageManager']
   const StorageQuotaManager: typeof import('./utils/storage')['StorageQuotaManager']
   const SystemEventListener: typeof import('./utils/eventBus')['SystemEventListener']
@@ -86,6 +87,7 @@ declare global {
   const onWatcherCleanup: typeof import('vue')['onWatcherCleanup']
   const performanceUtils: typeof import('./utils/common')['performanceUtils']
   const provide: typeof import('vue')['provide']
+  const pwaManager: typeof import('./utils/pwaUtils')['pwaManager']
   const randomChoice: typeof import('./utils/common')['randomChoice']
   const randomFloat: typeof import('./utils/common')['randomFloat']
   const randomInt: typeof import('./utils/common')['randomInt']
@@ -119,6 +121,7 @@ declare global {
   const useId: typeof import('vue')['useId']
   const useLink: typeof import('vue-router')['useLink']
   const useModel: typeof import('vue')['useModel']
+  const usePWA: typeof import('./composables/usePWA')['default']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
   const useSlots: typeof import('vue')['useSlots']
@@ -134,6 +137,9 @@ declare global {
   // @ts-ignore
   export type { Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
+  // @ts-ignore
+  export type { PWAManager } from './utils/pwaUtils'
+  import('./utils/pwaUtils')
 }
 // for vue template auto import
 import { UnwrapRef } from 'vue'
@@ -141,6 +147,7 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly PWAManager: UnwrapRef<typeof import('./utils/pwaUtils')['PWAManager']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
@@ -183,6 +190,7 @@ declare module 'vue' {
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
     readonly onWatcherCleanup: UnwrapRef<typeof import('vue')['onWatcherCleanup']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
+    readonly pwaManager: UnwrapRef<typeof import('./utils/pwaUtils')['pwaManager']>
     readonly reactive: UnwrapRef<typeof import('vue')['reactive']>
     readonly readonly: UnwrapRef<typeof import('vue')['readonly']>
     readonly ref: UnwrapRef<typeof import('vue')['ref']>
@@ -206,6 +214,7 @@ declare module 'vue' {
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
+    readonly usePWA: UnwrapRef<typeof import('./composables/usePWA')['default']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>

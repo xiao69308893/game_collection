@@ -1,24 +1,23 @@
-/*
-/!**
+/**
  * 存储工具库
  * 提供统一的本地存储接口，支持多种存储方式
- *!/
+ */
 
 import { Storage } from '@/types'
 import { ErrorHandler } from './common'
 
-/!**
+/**
  * 存储项接口
- *!/
+ */
 interface StorageItem<T = any> {
     value: T
     timestamp: number
     expiration?: number
 }
 
-/!**
+/**
  * 本地存储适配器
- *!/
+ */
 class LocalStorageAdapter implements Storage.StorageAdapter {
     private prefix: string
     private encryption: boolean
@@ -108,12 +107,35 @@ class LocalStorageAdapter implements Storage.StorageAdapter {
     }
 }
 
-/!**
+/**
  * 会话存储适配器
- *!/
-class SessionStorageAdapter extends LocalStorageAdapter {
+ */
+class SessionStorageAdapter implements Storage.StorageAdapter {
+    private prefix: string
+    private encryption: boolean
+
     constructor(options: Storage.StorageConfig = {}) {
-        super(options)
+        this.prefix = options.namespace ? `${options.namespace}:` : ''
+        this.encryption = options.encryption || false
+    }
+
+    private getKey(key: string): string {
+        return this.prefix + key
+    }
+
+    private encrypt(data: string): string {
+        if (!this.encryption) return data
+        // 简单的Base64编码，实际项目中应使用更安全的加密算法
+        return btoa(data)
+    }
+
+    private decrypt(data: string): string {
+        if (!this.encryption) return data
+        try {
+            return atob(data)
+        } catch {
+            return data
+        }
     }
 
     async getItem<T>(key: string): Promise<T | null> {
@@ -154,7 +176,7 @@ class SessionStorageAdapter extends LocalStorageAdapter {
         return ErrorHandler.safeExecute(() => {
             const keys = Object.keys(sessionStorage)
             keys.forEach(key => {
-                if (key.startsWith(this.getKey(''))) {
+                if (key.startsWith(this.prefix)) {
                     sessionStorage.removeItem(key)
                 }
             })
@@ -165,27 +187,15 @@ class SessionStorageAdapter extends LocalStorageAdapter {
         return ErrorHandler.safeExecute(() => {
             const keys = Object.keys(sessionStorage)
             return keys
-                .filter(key => key.startsWith(this.getKey('')))
-                .map(key => key.slice(this.getKey('').length))
+                .filter(key => key.startsWith(this.prefix))
+                .map(key => key.slice(this.prefix.length))
         }, [])
-    }
-
-    private getKey(key: string): string {
-        return super['getKey'](key)
-    }
-
-    private encrypt(data: string): string {
-        return super['encrypt'](data)
-    }
-
-    private decrypt(data: string): string {
-        return super['decrypt'](data)
     }
 }
 
-/!**
+/**
  * IndexedDB 存储适配器
- *!/
+ */
 class IndexedDBAdapter implements Storage.StorageAdapter {
     private dbName: string
     private storeName: string
@@ -325,9 +335,9 @@ class IndexedDBAdapter implements Storage.StorageAdapter {
     }
 }
 
-/!**
+/**
  * 内存存储适配器
- *!/
+ */
 class MemoryStorageAdapter implements Storage.StorageAdapter {
     private storage = new Map<string, StorageItem>()
     private timers = new Map<string, NodeJS.Timeout>()
@@ -388,9 +398,9 @@ class MemoryStorageAdapter implements Storage.StorageAdapter {
     }
 }
 
-/!**
+/**
  * 存储管理器
- *!/
+ */
 export class StorageManager {
     private adapter: Storage.StorageAdapter
     private defaultExpiration?: number
@@ -419,16 +429,16 @@ export class StorageManager {
         }
     }
 
-    /!**
+    /**
      * 获取数据
-     *!/
+     */
     async get<T>(key: Storage.StorageKey | string): Promise<T | null> {
         return this.adapter.getItem<T>(key.toString())
     }
 
-    /!**
+    /**
      * 设置数据
-     *!/
+     */
     async set<T>(
         key: Storage.StorageKey | string,
         value: T,
@@ -441,40 +451,40 @@ export class StorageManager {
         )
     }
 
-    /!**
+    /**
      * 删除数据
-     *!/
+     */
     async remove(key: Storage.StorageKey | string): Promise<void> {
         return this.adapter.removeItem(key.toString())
     }
 
-    /!**
+    /**
      * 清空所有数据
-     *!/
+     */
     async clear(): Promise<void> {
         return this.adapter.clear()
     }
 
-    /!**
+    /**
      * 获取所有键名
-     *!/
+     */
     async keys(): Promise<string[]> {
         return this.adapter.getAllKeys()
     }
 
-    /!**
+    /**
      * 检查键是否存在
-     *!/
+     */
     async has(key: Storage.StorageKey | string): Promise<boolean> {
         const value = await this.get(key)
         return value !== null
     }
 
-    /!**
+    /**
      * 获取存储大小（仅适用于localStorage和sessionStorage）
-     *!/
+     */
     async size(): Promise<number> {
-        if (this.adapter instanceof LocalStorageAdapter) {
+        if (this.adapter instanceof LocalStorageAdapter || this.adapter instanceof SessionStorageAdapter) {
             const keys = await this.keys()
             let size = 0
             for (const key of keys) {
@@ -487,35 +497,35 @@ export class StorageManager {
     }
 }
 
-/!**
+/**
  * 创建默认存储实例
- *!/
+ */
 export const storage = new StorageManager('localStorage', {
     namespace: 'game-collection',
     encryption: false,
     expiration: 30 * 24 * 60 * 60 * 1000 // 30天
 })
 
-/!**
+/**
  * 创建会话存储实例
- *!/
+ */
 export const sessionStorage = new StorageManager('sessionStorage', {
     namespace: 'game-collection-session'
 })
 
-/!**
+/**
  * 创建IndexedDB存储实例
- *!/
+ */
 export const indexedDBStorage = new StorageManager('indexedDB')
 
-/!**
+/**
  * 创建内存存储实例
- *!/
+ */
 export const memoryStorage = new StorageManager('memory')
 
-/!**
+/**
  * 游戏数据存储工具
- *!/
+ */
 export class GameDataStorage {
     private storage: StorageManager
 
@@ -523,23 +533,23 @@ export class GameDataStorage {
         this.storage = storageType === 'indexedDB' ? indexedDBStorage : storage
     }
 
-    /!**
+    /**
      * 保存游戏设置
-     *!/
+     */
     async saveGameSettings(settings: any): Promise<void> {
         await this.storage.set(Storage.StorageKey.USER_SETTINGS, settings)
     }
 
-    /!**
+    /**
      * 获取游戏设置
-     *!/
+     */
     async getGameSettings(): Promise<any> {
         return this.storage.get(Storage.StorageKey.USER_SETTINGS)
     }
 
-    /!**
+    /**
      * 保存游戏分数
-     *!/
+     */
     async saveGameScore(gameType: string, score: any): Promise<void> {
         const scores = await this.getGameScores(gameType) || []
         scores.push({
@@ -555,16 +565,16 @@ export class GameDataStorage {
         await this.storage.set(`${Storage.StorageKey.GAME_SCORES}_${gameType}`, topScores)
     }
 
-    /!**
+    /**
      * 获取游戏分数
-     *!/
+     */
     async getGameScores(gameType: string): Promise<any[]> {
         return this.storage.get(`${Storage.StorageKey.GAME_SCORES}_${gameType}`) || []
     }
 
-    /!**
+    /**
      * 保存游戏存档
-     *!/
+     */
     async saveGameData(gameType: string, saveData: any): Promise<void> {
         const saves = await this.getGameSaves(gameType) || []
         const existingIndex = saves.findIndex(save => save.slot === saveData.slot)
@@ -584,25 +594,25 @@ export class GameDataStorage {
         await this.storage.set(`${Storage.StorageKey.GAME_SAVES}_${gameType}`, saves)
     }
 
-    /!**
+    /**
      * 获取游戏存档
-     *!/
+     */
     async getGameSaves(gameType: string): Promise<any[]> {
         return this.storage.get(`${Storage.StorageKey.GAME_SAVES}_${gameType}`) || []
     }
 
-    /!**
+    /**
      * 删除游戏存档
-     *!/
+     */
     async deleteGameSave(gameType: string, saveId: string): Promise<void> {
         const saves = await this.getGameSaves(gameType)
         const filteredSaves = saves.filter(save => save.id !== saveId)
         await this.storage.set(`${Storage.StorageKey.GAME_SAVES}_${gameType}`, filteredSaves)
     }
 
-    /!**
+    /**
      * 保存游戏成就
-     *!/
+     */
     async saveAchievement(achievement: any): Promise<void> {
         const achievements = await this.getAchievements() || []
         const existingIndex = achievements.findIndex(a => a.id === achievement.id)
@@ -616,16 +626,16 @@ export class GameDataStorage {
         }
     }
 
-    /!**
+    /**
      * 获取游戏成就
-     *!/
+     */
     async getAchievements(): Promise<any[]> {
         return this.storage.get(Storage.StorageKey.GAME_ACHIEVEMENTS) || []
     }
 
-    /!**
+    /**
      * 保存游戏统计
-     *!/
+     */
     async saveGameStatistics(gameType: string, stats: any): Promise<void> {
         await this.storage.set(`${Storage.StorageKey.GAME_STATISTICS}_${gameType}`, {
             ...stats,
@@ -633,16 +643,16 @@ export class GameDataStorage {
         })
     }
 
-    /!**
+    /**
      * 获取游戏统计
-     *!/
+     */
     async getGameStatistics(gameType: string): Promise<any> {
         return this.storage.get(`${Storage.StorageKey.GAME_STATISTICS}_${gameType}`)
     }
 
-    /!**
+    /**
      * 清除指定游戏的所有数据
-     *!/
+     */
     async clearGameData(gameType: string): Promise<void> {
         await Promise.all([
             this.storage.remove(`${Storage.StorageKey.GAME_SCORES}_${gameType}`),
@@ -651,9 +661,9 @@ export class GameDataStorage {
         ])
     }
 
-    /!**
+    /**
      * 导出游戏数据
-     *!/
+     */
     async exportGameData(): Promise<string> {
         const data = {
             settings: await this.getGameSettings(),
@@ -676,9 +686,9 @@ export class GameDataStorage {
         return JSON.stringify(data, null, 2)
     }
 
-    /!**
+    /**
      * 导入游戏数据
-     *!/
+     */
     async importGameData(dataString: string): Promise<boolean> {
         try {
             const data = JSON.parse(dataString)
@@ -721,18 +731,18 @@ export class GameDataStorage {
     }
 }
 
-/!**
+/**
  * 默认游戏数据存储实例
- *!/
+ */
 export const gameDataStorage = new GameDataStorage()
 
-/!**
+/**
  * 存储配额管理
- *!/
+ */
 export class StorageQuotaManager {
-    /!**
+    /**
      * 获取存储配额信息
-     *!/
+     */
     static async getQuotaInfo(): Promise<{
         quota: number
         usage: number
@@ -760,9 +770,9 @@ export class StorageQuotaManager {
         return null
     }
 
-    /!**
+    /**
      * 检查存储空间是否充足
-     *!/
+     */
     static async hasEnoughSpace(requiredBytes: number): Promise<boolean> {
         const quotaInfo = await this.getQuotaInfo()
         if (!quotaInfo) return true // 无法检测时假设有足够空间
@@ -770,9 +780,9 @@ export class StorageQuotaManager {
         return quotaInfo.available >= requiredBytes
     }
 
-    /!**
+    /**
      * 清理过期数据
-     *!/
+     */
     static async cleanupExpiredData(): Promise<void> {
         const storageManager = new StorageManager('localStorage')
         const keys = await storageManager.keys()
@@ -787,9 +797,9 @@ export class StorageQuotaManager {
     }
 }
 
-/!**
+/**
  * 数据同步管理器
- *!/
+ */
 export class DataSyncManager {
     private storage: StorageManager
     private lastSyncTime: number = 0
@@ -798,9 +808,9 @@ export class DataSyncManager {
         this.storage = storage
     }
 
-    /!**
+    /**
      * 标记数据为已修改
-     *!/
+     */
     async markDataAsModified(key: string): Promise<void> {
         const modifiedKeys = await this.storage.get('_modified_keys') || []
         if (!modifiedKeys.includes(key)) {
@@ -809,9 +819,9 @@ export class DataSyncManager {
         }
     }
 
-    /!**
+    /**
      * 获取已修改的数据
-     *!/
+     */
     async getModifiedData(): Promise<Record<string, any>> {
         const modifiedKeys = await this.storage.get('_modified_keys') || []
         const modifiedData: Record<string, any> = {}
@@ -826,18 +836,18 @@ export class DataSyncManager {
         return modifiedData
     }
 
-    /!**
+    /**
      * 清除修改标记
-     *!/
+     */
     async clearModifiedMarks(): Promise<void> {
         await this.storage.remove('_modified_keys')
         this.lastSyncTime = Date.now()
         await this.storage.set('_last_sync_time', this.lastSyncTime)
     }
 
-    /!**
+    /**
      * 获取上次同步时间
-     *!/
+     */
     async getLastSyncTime(): Promise<number> {
         if (this.lastSyncTime === 0) {
             this.lastSyncTime = await this.storage.get('_last_sync_time') || 0
@@ -845,4 +855,3 @@ export class DataSyncManager {
         return this.lastSyncTime
     }
 }
-*/

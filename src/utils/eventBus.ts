@@ -1,26 +1,25 @@
-/*
-/!**
+/**
  * 事件总线工具
  * 提供跨组件通信和事件管理功能
- *!/
+ */
 
 import { Events } from '@/types'
 
-/!**
+/**
  * 事件监听器类型
- *!/
+ */
 type EventListener<T = any> = (data: T) => void
 
-/!**
+/**
  * 事件映射类型
- *!/
+ */
 interface EventMap {
     [key: string]: any
 }
 
-/!**
+/**
  * 事件总线类
- *!/
+ */
 export class EventBus<T extends EventMap = EventMap> implements Events.EventEmitter {
     private events: Map<keyof T, Set<EventListener<T[keyof T]>>> = new Map()
     private onceEvents: Map<keyof T, Set<EventListener<T[keyof T]>>> = new Map()
@@ -32,11 +31,11 @@ export class EventBus<T extends EventMap = EventMap> implements Events.EventEmit
         this.debug = options.debug || false
     }
 
-    /!**
+    /**
      * 添加事件监听器
      * @param event 事件名
      * @param listener 监听器函数
-     *!/
+     */
     on<K extends keyof T>(event: K, listener: EventListener<T[K]>): void {
         if (!this.events.has(event)) {
             this.events.set(event, new Set())
@@ -49,39 +48,39 @@ export class EventBus<T extends EventMap = EventMap> implements Events.EventEmit
             console.warn(`Event '${String(event)}' has too many listeners (${listeners.size})`)
         }
 
-        listeners.add(listener)
+        listeners.add(listener as EventListener<T[keyof T]>)
 
         if (this.debug) {
             console.log(`Event listener added for '${String(event)}'`)
         }
     }
 
-    /!**
+    /**
      * 添加一次性事件监听器
      * @param event 事件名
      * @param listener 监听器函数
-     *!/
+     */
     once<K extends keyof T>(event: K, listener: EventListener<T[K]>): void {
         if (!this.onceEvents.has(event)) {
             this.onceEvents.set(event, new Set())
         }
 
-        this.onceEvents.get(event)!.add(listener)
+        this.onceEvents.get(event)!.add(listener as EventListener<T[keyof T]>)
 
         if (this.debug) {
             console.log(`One-time event listener added for '${String(event)}'`)
         }
     }
 
-    /!**
+    /**
      * 移除事件监听器
      * @param event 事件名
      * @param listener 监听器函数
-     *!/
+     */
     off<K extends keyof T>(event: K, listener: EventListener<T[K]>): void {
         const listeners = this.events.get(event)
         if (listeners) {
-            listeners.delete(listener)
+            listeners.delete(listener as EventListener<T[keyof T]>)
             if (listeners.size === 0) {
                 this.events.delete(event)
             }
@@ -89,7 +88,7 @@ export class EventBus<T extends EventMap = EventMap> implements Events.EventEmit
 
         const onceListeners = this.onceEvents.get(event)
         if (onceListeners) {
-            onceListeners.delete(listener)
+            onceListeners.delete(listener as EventListener<T[keyof T]>)
             if (onceListeners.size === 0) {
                 this.onceEvents.delete(event)
             }
@@ -100,10 +99,10 @@ export class EventBus<T extends EventMap = EventMap> implements Events.EventEmit
         }
     }
 
-    /!**
+    /**
      * 移除指定事件的所有监听器
      * @param event 事件名
-     *!/
+     */
     removeAllListeners<K extends keyof T>(event?: K): void {
         if (event) {
             this.events.delete(event)
@@ -120,11 +119,11 @@ export class EventBus<T extends EventMap = EventMap> implements Events.EventEmit
         }
     }
 
-    /!**
+    /**
      * 触发事件
      * @param event 事件名
      * @param data 事件数据
-     *!/
+     */
     emit<K extends keyof T>(event: K, data?: T[K]): void {
         // 触发普通监听器
         const listeners = this.events.get(event)
@@ -157,11 +156,11 @@ export class EventBus<T extends EventMap = EventMap> implements Events.EventEmit
         }
     }
 
-    /!**
+    /**
      * 异步触发事件
      * @param event 事件名
      * @param data 事件数据
-     *!/
+     */
     async emitAsync<K extends keyof T>(event: K, data?: T[K]): Promise<void> {
         const promises: Promise<void>[] = []
 
@@ -194,59 +193,59 @@ export class EventBus<T extends EventMap = EventMap> implements Events.EventEmit
         }
     }
 
-    /!**
+    /**
      * 获取事件的监听器数量
      * @param event 事件名
      * @returns 监听器数量
-     *!/
+     */
     listenerCount<K extends keyof T>(event: K): number {
         const listeners = this.events.get(event)
         const onceListeners = this.onceEvents.get(event)
         return (listeners?.size || 0) + (onceListeners?.size || 0)
     }
 
-    /!**
+    /**
      * 获取所有事件名
      * @returns 事件名数组
-     *!/
+     */
     eventNames(): (keyof T)[] {
         const allEvents = new Set([...this.events.keys(), ...this.onceEvents.keys()])
         return Array.from(allEvents)
     }
 
-    /!**
+    /**
      * 获取指定事件的所有监听器
      * @param event 事件名
      * @returns 监听器数组
-     *!/
+     */
     listeners<K extends keyof T>(event: K): EventListener<T[K]>[] {
         const listeners = this.events.get(event) || new Set()
         const onceListeners = this.onceEvents.get(event) || new Set()
         return [...listeners, ...onceListeners]
     }
 
-    /!**
+    /**
      * 设置最大监听器数量
      * @param n 最大数量
-     *!/
+     */
     setMaxListeners(n: number): void {
         this.maxListeners = n
     }
 
-    /!**
+    /**
      * 获取最大监听器数量
      * @returns 最大数量
-     *!/
+     */
     getMaxListeners(): number {
         return this.maxListeners
     }
 
-    /!**
+    /**
      * 等待事件触发
      * @param event 事件名
      * @param timeout 超时时间（毫秒）
      * @returns Promise<事件数据>
-     *!/
+     */
     waitFor<K extends keyof T>(event: K, timeout?: number): Promise<T[K]> {
         return new Promise((resolve, reject) => {
             let timeoutId: NodeJS.Timeout | null = null
@@ -269,11 +268,11 @@ export class EventBus<T extends EventMap = EventMap> implements Events.EventEmit
         })
     }
 
-    /!**
+    /**
      * 创建事件代理
      * @param targetBus 目标事件总线
      * @param eventMap 事件映射
-     *!/
+     */
     proxy<U extends EventMap>(
         targetBus: EventBus<U>,
         eventMap: Partial<Record<keyof T, keyof U>>
@@ -285,9 +284,9 @@ export class EventBus<T extends EventMap = EventMap> implements Events.EventEmit
         })
     }
 
-    /!**
+    /**
      * 销毁事件总线
-     *!/
+     */
     destroy(): void {
         this.removeAllListeners()
         if (this.debug) {
@@ -296,9 +295,9 @@ export class EventBus<T extends EventMap = EventMap> implements Events.EventEmit
     }
 }
 
-/!**
+/**
  * 游戏事件接口
- *!/
+ */
 interface GameEvents {
     // 游戏生命周期事件
     'game:start': { gameType: string; timestamp: number }
@@ -328,14 +327,14 @@ interface GameEvents {
     'error:network': { url?: string; error: Error; timestamp: number }
 }
 
-/!**
+/**
  * 全局事件总线实例
- *!/
+ */
 export const eventBus = new EventBus<GameEvents>({ debug: false })
 
-/!**
+/**
  * 游戏事件管理器
- *!/
+ */
 export class GameEventManager {
     private eventBus: EventBus<GameEvents>
     private gameType: string
@@ -345,9 +344,9 @@ export class GameEventManager {
         this.eventBus = eventBusInstance || eventBus
     }
 
-    /!**
+    /**
      * 触发游戏开始事件
-     *!/
+     */
     emitGameStart(): void {
         this.eventBus.emit('game:start', {
             gameType: this.gameType,
@@ -355,9 +354,9 @@ export class GameEventManager {
         })
     }
 
-    /!**
+    /**
      * 触发游戏暂停事件
-     *!/
+     */
     emitGamePause(): void {
         this.eventBus.emit('game:pause', {
             gameType: this.gameType,
@@ -365,9 +364,9 @@ export class GameEventManager {
         })
     }
 
-    /!**
+    /**
      * 触发游戏继续事件
-     *!/
+     */
     emitGameResume(): void {
         this.eventBus.emit('game:resume', {
             gameType: this.gameType,
@@ -375,9 +374,9 @@ export class GameEventManager {
         })
     }
 
-    /!**
+    /**
      * 触发游戏结束事件
-     *!/
+     */
     emitGameOver(score: number): void {
         this.eventBus.emit('game:over', {
             gameType: this.gameType,
@@ -386,9 +385,9 @@ export class GameEventManager {
         })
     }
 
-    /!**
+    /**
      * 触发游戏重启事件
-     *!/
+     */
     emitGameRestart(): void {
         this.eventBus.emit('game:restart', {
             gameType: this.gameType,
@@ -396,9 +395,9 @@ export class GameEventManager {
         })
     }
 
-    /!**
+    /**
      * 触发分数更新事件
-     *!/
+     */
     emitScoreUpdate(score: number, delta: number): void {
         this.eventBus.emit('score:update', {
             gameType: this.gameType,
@@ -407,9 +406,9 @@ export class GameEventManager {
         })
     }
 
-    /!**
+    /**
      * 触发等级提升事件
-     *!/
+     */
     emitLevelUp(level: number, oldLevel: number): void {
         this.eventBus.emit('level:up', {
             gameType: this.gameType,
@@ -418,9 +417,9 @@ export class GameEventManager {
         })
     }
 
-    /!**
+    /**
      * 触发成就解锁事件
-     *!/
+     */
     emitAchievementUnlock(id: string, name: string): void {
         this.eventBus.emit('achievement:unlock', {
             id,
@@ -429,9 +428,9 @@ export class GameEventManager {
         })
     }
 
-    /!**
+    /**
      * 触发游戏错误事件
-     *!/
+     */
     emitGameError(error: Error): void {
         this.eventBus.emit('error:game', {
             gameType: this.gameType,
@@ -441,9 +440,9 @@ export class GameEventManager {
     }
 }
 
-/!**
+/**
  * 系统事件监听器
- *!/
+ */
 export class SystemEventListener {
     private eventBus: EventBus<GameEvents>
 
@@ -487,9 +486,9 @@ export class SystemEventListener {
     }
 }
 
-/!**
+/**
  * 事件记录器
- *!/
+ */
 export class EventLogger {
     private eventBus: EventBus<GameEvents>
     private logs: Array<{
@@ -527,9 +526,9 @@ export class EventLogger {
         }
     }
 
-    /!**
+    /**
      * 获取事件日志
-     *!/
+     */
     getLogs(filter?: {
         event?: string
         startTime?: number
@@ -556,16 +555,16 @@ export class EventLogger {
         return filteredLogs
     }
 
-    /!**
+    /**
      * 清除日志
-     *!/
+     */
     clearLogs(): void {
         this.logs = []
     }
 
-    /!**
+    /**
      * 导出日志
-     *!/
+     */
     exportLogs(): string {
         return JSON.stringify(this.logs, null, 2)
     }
@@ -582,4 +581,3 @@ if (typeof window !== 'undefined') {
 }
 
 export default eventBus
-*/

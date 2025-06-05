@@ -1,36 +1,3 @@
-import { registerSW } from 'virtual:pwa-register'
-
-const updateSW = registerSW({
-    onNeedRefresh() {
-        // 显示更新提示
-        if (confirm('发现新版本，是否立即更新？')) {
-            updateSW()
-        }
-    },
-    onOfflineReady() {
-        // 应用已准备好离线使用
-        console.log('应用已准备好离线使用')
-
-        // 可以显示一个提示消息
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.ready.then(() => {
-                // console.log('Service Worker 已准备就绪')
-            })
-        }
-    },
-})
-
-// 监听网络状态变化
-window.addEventListener('online', () => {
-    console.log('网络已连接')
-    // 可以在这里同步离线数据
-})
-
-window.addEventListener('offline', () => {
-    console.log('网络已断开，应用将以离线模式运行')
-})
-
-// src/utils/pwaUtils.ts - PWA 工具函数
 export class PWAManager {
     private deferredPrompt: any = null
 
