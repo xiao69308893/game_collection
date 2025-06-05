@@ -284,4 +284,8 @@ export default class SnakeScene extends BaseGameScene {
         this.moveSpeed = Math.max(50, 150 - (level - 1) * 20)
         this.playSound('levelup')
     }
+
+    setDirection(number: number, number2: number) {
+        
+    }
 }

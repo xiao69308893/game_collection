@@ -1,9 +1,9 @@
 // 导入基础样式
-@import './reset';
-@import './variables';
-@import './themes';
-@import './utilities';
-@import './animations';
+@use './reset';
+@use  './variables';
+@use  './themes';
+@use  './utilities';
+@use  './animations';
 
 // 全局样式
 * {

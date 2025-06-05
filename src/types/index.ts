@@ -1,12 +1,13 @@
+/*
 // ============================================
 // 全局类型定义
 // ============================================
 
-/**
+/!**
  * 游戏相关类型定义
- */
+ *!/
 export namespace Game {
-    /** 游戏状态枚举 */
+    /!** 游戏状态枚举 *!/
     export enum GameState {
         IDLE = 'idle',
         PLAYING = 'playing',
@@ -15,7 +16,7 @@ export namespace Game {
         LOADING = 'loading'
     }
 
-    /** 游戏难度级别 */
+    /!** 游戏难度级别 *!/
     export enum Difficulty {
         EASY = 'easy',
         NORMAL = 'normal',
@@ -23,10 +24,10 @@ export namespace Game {
         EXPERT = 'expert'
     }
 
-    /** 游戏类型 */
+    /!** 游戏类型 *!/
     export type GameType = 'tetris' | 'snake' | 'puzzle' | 'memory'
 
-    /** 游戏分数记录 */
+    /!** 游戏分数记录 *!/
     export interface Score {
         id: string
         gameType: GameType
@@ -39,7 +40,7 @@ export namespace Game {
         achievements?: Achievement[]
     }
 
-    /** 游戏成就 */
+    /!** 游戏成就 *!/
     export interface Achievement {
         id: string
         name: string
@@ -49,7 +50,7 @@ export namespace Game {
         rarity: 'common' | 'rare' | 'epic' | 'legendary'
     }
 
-    /** 游戏配置 */
+    /!** 游戏配置 *!/
     export interface GameConfig {
         gameType: GameType
         difficulty: Difficulty
@@ -61,7 +62,7 @@ export namespace Game {
         debugMode: boolean
     }
 
-    /** 游戏统计信息 */
+    /!** 游戏统计信息 *!/
     export interface GameStats {
         totalGamesPlayed: number
         totalPlayTime: number // 总游戏时间（秒）
@@ -76,23 +77,23 @@ export namespace Game {
     }
 }
 
-/**
+/!**
  * 用户界面相关类型
- */
+ *!/
 export namespace UI {
-    /** 主题类型 */
+    /!** 主题类型 *!/
     export type Theme = 'light' | 'dark' | 'auto'
 
-    /** 语言代码 */
+    /!** 语言代码 *!/
     export type Locale = 'zh-CN' | 'en-US' | 'de-DE' | 'fr-FR' | 'ar-SA'
 
-    /** 设备类型 */
+    /!** 设备类型 *!/
     export type DeviceType = 'mobile' | 'tablet' | 'desktop'
 
-    /** 屏幕方向 */
+    /!** 屏幕方向 *!/
     export type Orientation = 'portrait' | 'landscape'
 
-    /** 导航菜单项 */
+    /!** 导航菜单项 *!/
     export interface MenuItem {
         id: string
         label: string
@@ -103,7 +104,7 @@ export namespace UI {
         badge?: string | number
     }
 
-    /** 模态框配置 */
+    /!** 模态框配置 *!/
     export interface ModalConfig {
         title: string
         content: string
@@ -114,7 +115,7 @@ export namespace UI {
         persistent?: boolean
     }
 
-    /** 通知配置 */
+    /!** 通知配置 *!/
     export interface NotificationConfig {
         id: string
         title: string
@@ -125,7 +126,7 @@ export namespace UI {
         actions?: NotificationAction[]
     }
 
-    /** 通知操作 */
+    /!** 通知操作 *!/
     export interface NotificationAction {
         label: string
         action: () => void
@@ -133,11 +134,11 @@ export namespace UI {
     }
 }
 
-/**
+/!**
  * API 相关类型定义
- */
+ *!/
 export namespace API {
-    /** API 响应基础结构 */
+    /!** API 响应基础结构 *!/
     export interface BaseResponse<T = any> {
         code: number
         message: string
@@ -146,7 +147,7 @@ export namespace API {
         success: boolean
     }
 
-    /** 分页参数 */
+    /!** 分页参数 *!/
     export interface PaginationParams {
         page: number
         pageSize: number
@@ -154,7 +155,7 @@ export namespace API {
         sortOrder?: 'asc' | 'desc'
     }
 
-    /** 分页响应 */
+    /!** 分页响应 *!/
     export interface PaginatedResponse<T> {
         items: T[]
         total: number
@@ -165,7 +166,7 @@ export namespace API {
         hasPrevious: boolean
     }
 
-    /** 请求配置 */
+    /!** 请求配置 *!/
     export interface RequestConfig {
         timeout?: number
         retries?: number
@@ -174,7 +175,7 @@ export namespace API {
         cacheDuration?: number // 缓存持续时间（毫秒）
     }
 
-    /** 错误响应 */
+    /!** 错误响应 *!/
     export interface ErrorResponse {
         code: number
         message: string
@@ -184,14 +185,14 @@ export namespace API {
     }
 }
 
-/**
+/!**
  * 应用配置相关类型
- */
+ *!/
 export namespace Config {
-    /** 应用环境 */
+    /!** 应用环境 *!/
     export type Environment = 'development' | 'staging' | 'production' | 'test'
 
-    /** 应用配置 */
+    /!** 应用配置 *!/
     export interface AppConfig {
         name: string
         version: string
@@ -204,7 +205,7 @@ export namespace Config {
         features: FeatureFlags
     }
 
-    /** 功能特性开关 */
+    /!** 功能特性开关 *!/
     export interface FeatureFlags {
         enablePWA: boolean
         enableOfflineMode: boolean
@@ -216,7 +217,7 @@ export namespace Config {
         enableTutorial: boolean
     }
 
-    /** 游戏引擎配置 */
+    /!** 游戏引擎配置 *!/
     export interface GameEngineConfig {
         physics: {
             gravity: number
@@ -235,11 +236,11 @@ export namespace Config {
     }
 }
 
-/**
+/!**
  * 事件相关类型定义
- */
+ *!/
 export namespace Events {
-    /** 游戏事件类型 */
+    /!** 游戏事件类型 *!/
     export type GameEventType =
         | 'game_start'
         | 'game_pause'
@@ -249,7 +250,7 @@ export namespace Events {
         | 'level_up'
         | 'achievement_unlock'
 
-    /** 游戏事件数据 */
+    /!** 游戏事件数据 *!/
     export interface GameEvent {
         type: GameEventType
         timestamp: number
@@ -257,7 +258,7 @@ export namespace Events {
         data?: Record<string, any>
     }
 
-    /** 系统事件类型 */
+    /!** 系统事件类型 *!/
     export type SystemEventType =
         | 'theme_change'
         | 'language_change'
@@ -265,17 +266,17 @@ export namespace Events {
         | 'network_change'
         | 'fullscreen_change'
 
-    /** 系统事件数据 */
+    /!** 系统事件数据 *!/
     export interface SystemEvent {
         type: SystemEventType
         timestamp: number
         data?: Record<string, any>
     }
 
-    /** 事件监听器 */
+    /!** 事件监听器 *!/
     export type EventListener<T = any> = (event: T) => void
 
-    /** 事件发射器接口 */
+    /!** 事件发射器接口 *!/
     export interface EventEmitter {
         on<T>(event: string, listener: EventListener<T>): void
         off<T>(event: string, listener: EventListener<T>): void
@@ -284,11 +285,11 @@ export namespace Events {
     }
 }
 
-/**
+/!**
  * 存储相关类型定义
- */
+ *!/
 export namespace Storage {
-    /** 存储键名枚举 */
+    /!** 存储键名枚举 *!/
     export enum StorageKey {
         // 用户设置
         USER_SETTINGS = 'user_settings',
@@ -308,16 +309,16 @@ export namespace Storage {
         TUTORIAL_COMPLETED = 'tutorial_completed'
     }
 
-    /** 存储适配器接口 */
+    /!** 存储适配器接口 *!/
     export interface StorageAdapter {
         getItem<T>(key: string): Promise<T | null>
-        setItem<T>(key: string, value: T): Promise<void>
+        setItem<T>(key: string, value: T, expiration?: number): Promise<void>
         removeItem(key: string): Promise<void>
         clear(): Promise<void>
         getAllKeys(): Promise<string[]>
     }
 
-    /** 存储配置 */
+    /!** 存储配置 *!/
     export interface StorageConfig {
         namespace?: string
         encryption?: boolean
@@ -326,47 +327,47 @@ export namespace Storage {
     }
 }
 
-/**
+/!**
  * 工具类型定义
- */
+ *!/
 export namespace Utils {
-    /** 深度可选类型 */
+    /!** 深度可选类型 *!/
     export type DeepPartial<T> = {
         [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P]
     }
 
-    /** 深度只读类型 */
+    /!** 深度只读类型 *!/
     export type DeepReadonly<T> = {
         readonly [P in keyof T]: T[P] extends object ? DeepReadonly<T[P]> : T[P]
     }
 
-    /** 可空类型 */
+    /!** 可空类型 *!/
     export type Nullable<T> = T | null
 
-    /** 可选类型 */
+    /!** 可选类型 *!/
     export type Optional<T> = T | undefined
 
-    /** 数组元素类型 */
+    /!** 数组元素类型 *!/
     export type ArrayElement<T> = T extends (infer U)[] ? U : never
 
-    /** 函数参数类型 */
+    /!** 函数参数类型 *!/
     export type FunctionArgs<T> = T extends (...args: infer U) => any ? U : never
 
-    /** 函数返回类型 */
+    /!** 函数返回类型 *!/
     export type FunctionReturn<T> = T extends (...args: any[]) => infer U ? U : never
 
-    /** Promise 包装类型 */
+    /!** Promise 包装类型 *!/
     export type PromiseType<T> = T extends Promise<infer U> ? U : T
 
-    /** 键值对类型 */
+    /!** 键值对类型 *!/
     export type KeyValuePair<K extends string | number | symbol, V> = {
         [P in K]: V
     }
 }
 
-/**
+/!**
  * 第三方库类型扩展
- */
+ *!/
 declare module '*.vue' {
     import type { DefineComponent } from 'vue'
     const component: DefineComponent<{}, {}, any>
@@ -423,9 +424,9 @@ declare module '*.ogg' {
     export default content
 }
 
-/**
+/!**
  * 全局变量类型声明
- */
+ *!/
 declare global {
     interface Window {
         // 游戏相关
@@ -446,6 +447,9 @@ declare global {
         DeviceOrientationEvent?: {
             requestPermission?: () => Promise<'granted' | 'denied'>
         }
+
+        // 事件总线全局实例
+        eventBus?: any
     }
 
     // Vite 环境变量类型
@@ -478,3 +482,4 @@ declare global {
 
 // 确保此文件被视为模块
 export {}
+*/

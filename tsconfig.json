@@ -22,7 +22,8 @@
       "@utils/*": ["src/utils/*"],
       "@i18n/*": ["src/i18n/*"],
       "@assets/*": ["src/assets/*"]
-    }
+    },
+    "types": ["vite/client", "vite-plugin-pwa/client"]
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }]

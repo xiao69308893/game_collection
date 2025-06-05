@@ -14,13 +14,10 @@ const updateSW = registerSW({
         // 可以显示一个提示消息
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.ready.then(() => {
-                console.log('Service Worker 已准备就绪')
+                // console.log('Service Worker 已准备就绪')
             })
         }
     },
-    onRegisterError(error) {
-        console.error('Service Worker 注册失败:', error)
-    }
 })
 
 // 监听网络状态变化

@@ -134,82 +134,37 @@ declare global {
   // @ts-ignore
   export type { Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
-  // @ts-ignore
-  export type { ErrorHandler } from './utils/common'
-  import('./utils/common')
-  // @ts-ignore
-  export type { EventBus, GameEventManager, SystemEventListener, EventLogger } from './utils/eventBus'
-  import('./utils/eventBus')
-  // @ts-ignore
-  export type { StorageManager, GameDataStorage, StorageQuotaManager, DataSyncManager } from './utils/storage'
-  import('./utils/storage')
 }
 // for vue template auto import
 import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
-    readonly DataSyncManager: UnwrapRef<typeof import('./utils/storage')['DataSyncManager']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
-    readonly ErrorHandler: UnwrapRef<typeof import('./utils/common')['ErrorHandler']>
-    readonly EventBus: UnwrapRef<typeof import('./utils/eventBus')['EventBus']>
-    readonly EventLogger: UnwrapRef<typeof import('./utils/eventBus')['EventLogger']>
-    readonly GameDataStorage: UnwrapRef<typeof import('./utils/storage')['GameDataStorage']>
-    readonly GameEventManager: UnwrapRef<typeof import('./utils/eventBus')['GameEventManager']>
-    readonly StorageManager: UnwrapRef<typeof import('./utils/storage')['StorageManager']>
-    readonly StorageQuotaManager: UnwrapRef<typeof import('./utils/storage')['StorageQuotaManager']>
-    readonly SystemEventListener: UnwrapRef<typeof import('./utils/eventBus')['SystemEventListener']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
-    readonly chunkArray: UnwrapRef<typeof import('./utils/common')['chunkArray']>
-    readonly colorUtils: UnwrapRef<typeof import('./utils/common')['colorUtils']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
-    readonly copyToClipboard: UnwrapRef<typeof import('./utils/common')['copyToClipboard']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createPinia: UnwrapRef<typeof import('pinia')['createPinia']>
     readonly customRef: UnwrapRef<typeof import('vue')['customRef']>
-    readonly debounce: UnwrapRef<typeof import('./utils/common')['debounce']>
-    readonly deepClone: UnwrapRef<typeof import('./utils/common')['deepClone']>
-    readonly deepMerge: UnwrapRef<typeof import('./utils/common')['deepMerge']>
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
-    readonly downloadFile: UnwrapRef<typeof import('./utils/common')['downloadFile']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
-    readonly eventBus: UnwrapRef<typeof import('./utils/eventBus')['default']>
-    readonly formatDate: UnwrapRef<typeof import('./utils/common')['formatDate']>
-    readonly formatDuration: UnwrapRef<typeof import('./utils/common')['formatDuration']>
-    readonly formatFileSize: UnwrapRef<typeof import('./utils/common')['formatFileSize']>
-    readonly formatNumber: UnwrapRef<typeof import('./utils/common')['formatNumber']>
-    readonly gameDataStorage: UnwrapRef<typeof import('./utils/storage')['gameDataStorage']>
-    readonly generateId: UnwrapRef<typeof import('./utils/common')['generateId']>
-    readonly generateUUID: UnwrapRef<typeof import('./utils/common')['generateUUID']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
-    readonly getBrowserInfo: UnwrapRef<typeof import('./utils/common')['getBrowserInfo']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
-    readonly getDeviceType: UnwrapRef<typeof import('./utils/common')['getDeviceType']>
-    readonly getImageSize: UnwrapRef<typeof import('./utils/common')['getImageSize']>
-    readonly getOrientation: UnwrapRef<typeof import('./utils/common')['getOrientation']>
-    readonly getUrlParam: UnwrapRef<typeof import('./utils/common')['getUrlParam']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
-    readonly humanizeNumber: UnwrapRef<typeof import('./utils/common')['humanizeNumber']>
-    readonly indexedDBStorage: UnwrapRef<typeof import('./utils/storage')['indexedDBStorage']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
-    readonly isEmpty: UnwrapRef<typeof import('./utils/common')['isEmpty']>
-    readonly isMobile: UnwrapRef<typeof import('./utils/common')['isMobile']>
-    readonly isObject: UnwrapRef<typeof import('./utils/common')['isObject']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
-    readonly isTouchDevice: UnwrapRef<typeof import('./utils/common')['isTouchDevice']>
     readonly mapActions: UnwrapRef<typeof import('pinia')['mapActions']>
     readonly mapGetters: UnwrapRef<typeof import('pinia')['mapGetters']>
     readonly mapState: UnwrapRef<typeof import('pinia')['mapState']>
     readonly mapStores: UnwrapRef<typeof import('pinia')['mapStores']>
     readonly mapWritableState: UnwrapRef<typeof import('pinia')['mapWritableState']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
-    readonly memoryStorage: UnwrapRef<typeof import('./utils/storage')['memoryStorage']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
     readonly onBeforeMount: UnwrapRef<typeof import('vue')['onBeforeMount']>
@@ -220,7 +175,6 @@ declare module 'vue' {
     readonly onDeactivated: UnwrapRef<typeof import('vue')['onDeactivated']>
     readonly onErrorCaptured: UnwrapRef<typeof import('vue')['onErrorCaptured']>
     readonly onMounted: UnwrapRef<typeof import('vue')['onMounted']>
-    readonly onOrientationChange: UnwrapRef<typeof import('./utils/common')['onOrientationChange']>
     readonly onRenderTracked: UnwrapRef<typeof import('vue')['onRenderTracked']>
     readonly onRenderTriggered: UnwrapRef<typeof import('vue')['onRenderTriggered']>
     readonly onScopeDispose: UnwrapRef<typeof import('vue')['onScopeDispose']>
@@ -228,33 +182,22 @@ declare module 'vue' {
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
     readonly onWatcherCleanup: UnwrapRef<typeof import('vue')['onWatcherCleanup']>
-    readonly performanceUtils: UnwrapRef<typeof import('./utils/common')['performanceUtils']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
-    readonly randomChoice: UnwrapRef<typeof import('./utils/common')['randomChoice']>
-    readonly randomFloat: UnwrapRef<typeof import('./utils/common')['randomFloat']>
-    readonly randomInt: UnwrapRef<typeof import('./utils/common')['randomInt']>
     readonly reactive: UnwrapRef<typeof import('vue')['reactive']>
-    readonly readFile: UnwrapRef<typeof import('./utils/common')['readFile']>
     readonly readonly: UnwrapRef<typeof import('vue')['readonly']>
     readonly ref: UnwrapRef<typeof import('vue')['ref']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
-    readonly sessionStorage: UnwrapRef<typeof import('./utils/storage')['sessionStorage']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
     readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>
-    readonly setUrlParams: UnwrapRef<typeof import('./utils/common')['setUrlParams']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
     readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
     readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
-    readonly shuffleArray: UnwrapRef<typeof import('./utils/common')['shuffleArray']>
-    readonly storage: UnwrapRef<typeof import('./utils/storage')['storage']>
     readonly storeToRefs: UnwrapRef<typeof import('pinia')['storeToRefs']>
-    readonly throttle: UnwrapRef<typeof import('./utils/common')['throttle']>
     readonly toRaw: UnwrapRef<typeof import('vue')['toRaw']>
     readonly toRef: UnwrapRef<typeof import('vue')['toRef']>
     readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
     readonly toValue: UnwrapRef<typeof import('vue')['toValue']>
     readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
-    readonly uniqueArray: UnwrapRef<typeof import('./utils/common')['uniqueArray']>
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
@@ -267,7 +210,6 @@ declare module 'vue' {
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
-    readonly validators: UnwrapRef<typeof import('./utils/common')['validators']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
     readonly watchPostEffect: UnwrapRef<typeof import('vue')['watchPostEffect']>

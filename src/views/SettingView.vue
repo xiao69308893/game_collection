@@ -13,7 +13,7 @@
             <button
                 v-for="theme in themes"
                 :key="theme.value"
-                @click="setTheme(theme.value)"
+                @click="setTheme('auto')"
                 :class="['theme-option', { active: currentTheme === theme.value }]"
             >
               <component :is="theme.icon" class="icon" />
