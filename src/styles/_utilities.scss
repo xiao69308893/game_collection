@@ -1,0 +1,327 @@
+// ================================
+// 工具类样式 - Utilities
+// ================================
+
+// 文本对齐
+.text-left { text-align: left !important; }
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; }
+.text-justify { text-align: justify !important; }
+
+// 文本颜色
+.text-primary { color: var(--color-primary) !important; }
+.text-secondary { color: var(--color-secondary) !important; }
+.text-success { color: var(--color-success) !important; }
+.text-warning { color: var(--color-warning) !important; }
+.text-danger { color: var(--color-danger) !important; }
+.text-muted { color: var(--text-secondary) !important; }
+.text-white { color: #ffffff !important; }
+.text-dark { color: var(--text-primary) !important; }
+
+// 背景颜色
+.bg-primary { background-color: var(--color-primary) !important; }
+.bg-secondary { background-color: var(--color-secondary) !important; }
+.bg-success { background-color: var(--color-success) !important; }
+.bg-warning { background-color: var(--color-warning) !important; }
+.bg-danger { background-color: var(--color-danger) !important; }
+.bg-white { background-color: #ffffff !important; }
+.bg-transparent { background-color: transparent !important; }
+
+// 显示/隐藏
+.d-none { display: none !important; }
+.d-block { display: block !important; }
+.d-inline { display: inline !important; }
+.d-inline-block { display: inline-block !important; }
+.d-flex { display: flex !important; }
+.d-inline-flex { display: inline-flex !important; }
+.d-grid { display: grid !important; }
+
+// Flexbox 工具
+.flex-row { flex-direction: row !important; }
+.flex-column { flex-direction: column !important; }
+.flex-wrap { flex-wrap: wrap !important; }
+.flex-nowrap { flex-wrap: nowrap !important; }
+
+.justify-start { justify-content: flex-start !important; }
+.justify-center { justify-content: center !important; }
+.justify-end { justify-content: flex-end !important; }
+.justify-between { justify-content: space-between !important; }
+.justify-around { justify-content: space-around !important; }
+.justify-evenly { justify-content: space-evenly !important; }
+
+.align-start { align-items: flex-start !important; }
+.align-center { align-items: center !important; }
+.align-end { align-items: flex-end !important; }
+.align-baseline { align-items: baseline !important; }
+.align-stretch { align-items: stretch !important; }
+
+.flex-1 { flex: 1 !important; }
+.flex-auto { flex: auto !important; }
+.flex-none { flex: none !important; }
+
+// 间距工具 (margin & padding)
+@for $i from 0 through 5 {
+  // Margin
+  .m-#{$i} { margin: #{$i * 0.25}rem !important; }
+  .mt-#{$i} { margin-top: #{$i * 0.25}rem !important; }
+  .mr-#{$i} { margin-right: #{$i * 0.25}rem !important; }
+  .mb-#{$i} { margin-bottom: #{$i * 0.25}rem !important; }
+  .ml-#{$i} { margin-left: #{$i * 0.25}rem !important; }
+  .mx-#{$i} { margin-left: #{$i * 0.25}rem !important; margin-right: #{$i * 0.25}rem !important; }
+  .my-#{$i} { margin-top: #{$i * 0.25}rem !important; margin-bottom: #{$i * 0.25}rem !important; }
+
+  // Padding
+  .p-#{$i} { padding: #{$i * 0.25}rem !important; }
+  .pt-#{$i} { padding-top: #{$i * 0.25}rem !important; }
+  .pr-#{$i} { padding-right: #{$i * 0.25}rem !important; }
+  .pb-#{$i} { padding-bottom: #{$i * 0.25}rem !important; }
+  .pl-#{$i} { padding-left: #{$i * 0.25}rem !important; }
+  .px-#{$i} { padding-left: #{$i * 0.25}rem !important; padding-right: #{$i * 0.25}rem !important; }
+  .py-#{$i} { padding-top: #{$i * 0.25}rem !important; padding-bottom: #{$i * 0.25}rem !important; }
+}
+
+// 自动边距
+.m-auto { margin: auto !important; }
+.mt-auto { margin-top: auto !important; }
+.mr-auto { margin-right: auto !important; }
+.mb-auto { margin-bottom: auto !important; }
+.ml-auto { margin-left: auto !important; }
+.mx-auto { margin-left: auto !important; margin-right: auto !important; }
+.my-auto { margin-top: auto !important; margin-bottom: auto !important; }
+
+// 宽度和高度
+.w-25 { width: 25% !important; }
+.w-50 { width: 50% !important; }
+.w-75 { width: 75% !important; }
+.w-100 { width: 100% !important; }
+.w-auto { width: auto !important; }
+
+.h-25 { height: 25% !important; }
+.h-50 { height: 50% !important; }
+.h-75 { height: 75% !important; }
+.h-100 { height: 100% !important; }
+.h-auto { height: auto !important; }
+
+.mw-100 { max-width: 100% !important; }
+.mh-100 { max-height: 100% !important; }
+
+.min-vw-100 { min-width: 100vw !important; }
+.min-vh-100 { min-height: 100vh !important; }
+
+.vw-100 { width: 100vw !important; }
+.vh-100 { height: 100vh !important; }
+
+// 位置
+.position-static { position: static !important; }
+.position-relative { position: relative !important; }
+.position-absolute { position: absolute !important; }
+.position-fixed { position: fixed !important; }
+.position-sticky { position: sticky !important; }
+
+// 边框
+.border { border: 1px solid var(--border-color) !important; }
+.border-0 { border: 0 !important; }
+.border-top { border-top: 1px solid var(--border-color) !important; }
+.border-right { border-right: 1px solid var(--border-color) !important; }
+.border-bottom { border-bottom: 1px solid var(--border-color) !important; }
+.border-left { border-left: 1px solid var(--border-color) !important; }
+
+.border-top-0 { border-top: 0 !important; }
+.border-right-0 { border-right: 0 !important; }
+.border-bottom-0 { border-bottom: 0 !important; }
+.border-left-0 { border-left: 0 !important; }
+
+// 圆角
+.rounded { border-radius: 0.25rem !important; }
+.rounded-sm { border-radius: 0.125rem !important; }
+.rounded-lg { border-radius: 0.5rem !important; }
+.rounded-xl { border-radius: 1rem !important; }
+.rounded-pill { border-radius: 50rem !important; }
+.rounded-circle { border-radius: 50% !important; }
+.rounded-0 { border-radius: 0 !important; }
+
+.rounded-top { border-top-left-radius: 0.25rem !important; border-top-right-radius: 0.25rem !important; }
+.rounded-end { border-top-right-radius: 0.25rem !important; border-bottom-right-radius: 0.25rem !important; }
+.rounded-bottom { border-bottom-right-radius: 0.25rem !important; border-bottom-left-radius: 0.25rem !important; }
+.rounded-start { border-bottom-left-radius: 0.25rem !important; border-top-left-radius: 0.25rem !important; }
+
+// 阴影
+.shadow-none { box-shadow: none !important; }
+.shadow-sm { box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important; }
+.shadow { box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important; }
+.shadow-lg { box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important; }
+.shadow-xl { box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.2) !important; }
+
+// 溢出
+.overflow-auto { overflow: auto !important; }
+.overflow-hidden { overflow: hidden !important; }
+.overflow-visible { overflow: visible !important; }
+.overflow-scroll { overflow: scroll !important; }
+
+.overflow-x-auto { overflow-x: auto !important; }
+.overflow-x-hidden { overflow-x: hidden !important; }
+.overflow-x-visible { overflow-x: visible !important; }
+.overflow-x-scroll { overflow-x: scroll !important; }
+
+.overflow-y-auto { overflow-y: auto !important; }
+.overflow-y-hidden { overflow-y: hidden !important; }
+.overflow-y-visible { overflow-y: visible !important; }
+.overflow-y-scroll { overflow-y: scroll !important; }
+
+// 文字装饰
+.text-decoration-none { text-decoration: none !important; }
+.text-decoration-underline { text-decoration: underline !important; }
+.text-decoration-line-through { text-decoration: line-through !important; }
+
+// 文字转换
+.text-lowercase { text-transform: lowercase !important; }
+.text-uppercase { text-transform: uppercase !important; }
+.text-capitalize { text-transform: capitalize !important; }
+
+// 字体重量
+.fw-light { font-weight: 300 !important; }
+.fw-normal { font-weight: 400 !important; }
+.fw-medium { font-weight: 500 !important; }
+.fw-semibold { font-weight: 600 !important; }
+.fw-bold { font-weight: 700 !important; }
+.fw-bolder { font-weight: bolder !important; }
+
+// 字体样式
+.fst-italic { font-style: italic !important; }
+.fst-normal { font-style: normal !important; }
+
+// 行高
+.lh-1 { line-height: 1 !important; }
+.lh-sm { line-height: 1.25 !important; }
+.lh-base { line-height: 1.5 !important; }
+.lh-lg { line-height: 1.75 !important; }
+
+// 用户选择
+.user-select-all { user-select: all !important; }
+.user-select-auto { user-select: auto !important; }
+.user-select-none { user-select: none !important; }
+
+// 指针事件
+.pe-none { pointer-events: none !important; }
+.pe-auto { pointer-events: auto !important; }
+
+// 垂直对齐
+.align-baseline { vertical-align: baseline !important; }
+.align-top { vertical-align: top !important; }
+.align-middle { vertical-align: middle !important; }
+.align-bottom { vertical-align: bottom !important; }
+.align-text-bottom { vertical-align: text-bottom !important; }
+.align-text-top { vertical-align: text-top !important; }
+
+// 可见性
+.visible { visibility: visible !important; }
+.invisible { visibility: hidden !important; }
+
+// Z-index
+.z-n1 { z-index: -1 !important; }
+.z-0 { z-index: 0 !important; }
+.z-1 { z-index: 1 !important; }
+.z-2 { z-index: 2 !important; }
+.z-3 { z-index: 3 !important; }
+
+// 响应式可见性
+@media (max-width: 575.98px) {
+  .d-xs-none { display: none !important; }
+  .d-xs-block { display: block !important; }
+  .d-xs-flex { display: flex !important; }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .d-sm-none { display: none !important; }
+  .d-sm-block { display: block !important; }
+  .d-sm-flex { display: flex !important; }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .d-md-none { display: none !important; }
+  .d-md-block { display: block !important; }
+  .d-md-flex { display: flex !important; }
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .d-lg-none { display: none !important; }
+  .d-lg-block { display: block !important; }
+  .d-lg-flex { display: flex !important; }
+}
+
+@media (min-width: 1200px) {
+  .d-xl-none { display: none !important; }
+  .d-xl-block { display: block !important; }
+  .d-xl-flex { display: flex !important; }
+}
+
+// 游戏特定工具类
+.game-container {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.score-display {
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  text-align: center;
+}
+
+.level-indicator {
+  padding: 4px 12px;
+  background: var(--color-primary);
+  color: white;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.game-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+// 按钮效果
+.btn-game {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}

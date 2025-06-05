@@ -1,0 +1,44 @@
+{
+  "name": "game-collection",
+  "version": "1.0.0",
+  "description": "多平台游戏集合应用",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "type-check": "vue-tsc --noEmit",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "format": "prettier --write src/",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
+  },
+  "dependencies": {
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0",
+    "pinia": "^2.1.7",
+    "vue-i18n": "^9.10.1",
+    "phaser": "^3.70.0",
+    "@capacitor/core": "^5.7.0",
+    "@capacitor/app": "^5.0.6",
+    "@capacitor/haptics": "^5.0.6",
+    "@capacitor/keyboard": "^5.0.6",
+    "@capacitor/status-bar": "^5.0.6"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "vite": "^5.1.4",
+    "typescript": "^5.3.3",
+    "vue-tsc": "^2.0.6",
+    "@types/node": "^20.11.24",
+    "sass": "^1.71.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-vue": "^9.22.0",
+    "@vue/eslint-config-typescript": "^12.0.0",
+    "prettier": "^3.2.5",
+    "@tauri-apps/cli": "^1.5.9",
+    "unplugin-auto-import": "^0.17.5",
+    "unplugin-vue-components": "^0.26.0"
+  }
+}

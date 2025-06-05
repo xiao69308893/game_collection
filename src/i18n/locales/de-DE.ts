@@ -1,0 +1,92 @@
+export default {
+    common: {
+        play: 'Spielen',
+        pause: 'Pause',
+        resume: 'Fortsetzen',
+        restart: 'Neustart',
+        back: 'Zurück',
+        confirm: 'Bestätigen',
+        cancel: 'Abbrechen',
+        score: 'Punkte',
+        highScore: 'Highscore',
+        level: 'Level',
+        time: 'Zeit',
+        gameOver: 'Spiel vorbei',
+        newGame: 'Neues Spiel',
+        settings: 'Einstellungen',
+        language: 'Sprache',
+        theme: 'Thema',
+        sound: 'Soundeffekte',
+        music: 'Hintergrundmusik',
+        allRightsReserved: 'Alle Rechte vorbehalten'
+    },
+    home: {
+        title: 'Spielesammlung',
+        welcome: 'Willkommen zur Spielesammlung',
+        description: 'Klassische Spiele für zwischendurch',
+        startPlaying: 'Jetzt spielen',
+        viewAllGames: 'Alle Spiele anzeigen',
+        popularGames: 'Beliebte Spiele',
+        recentlyPlayed: 'Zuletzt gespielt'
+    },
+    games: {
+        title: 'Alle Spiele',
+        tetris: 'Tetris',
+        snake: 'Snake',
+        puzzle: 'Puzzle',
+        memory: 'Memory',
+        tetrisDesc: 'Das klassische Block-Spiel',
+        snakeDesc: 'Steuere die Schlange und sammle Futter',
+        puzzleDesc: 'Füge die Teile zum Bild zusammen',
+        memoryDesc: 'Finde die passenden Kartenpaare'
+    },
+    settings: {
+        title: 'Einstellungen',
+        general: 'Allgemein',
+        appearance: 'Aussehen',
+        audio: 'Audio',
+        language: 'Sprache',
+        selectLanguage: 'Sprache wählen',
+        theme: 'Thema',
+        lightTheme: 'Hell',
+        darkTheme: 'Dunkel',
+        autoTheme: 'Automatisch',
+        soundEffects: 'Soundeffekte',
+        backgroundMusic: 'Hintergrundmusik',
+        volume: 'Lautstärke',
+        reset: 'Zurücksetzen',
+        resetConfirm: 'Möchten Sie wirklich alle Einstellungen zurücksetzen?',
+        about: 'Über',
+        version: 'Version'
+    },
+    tetris: {
+        controls: 'Steuerung',
+        moveLeft: 'Links: ← / A',
+        moveRight: 'Rechts: → / D',
+        rotate: 'Drehen: ↑ / W',
+        softDrop: 'Schneller fallen: ↓ / S',
+        hardDrop: 'Sofort fallen: Leertaste',
+        pause: 'Pause: P / ESC',
+        linesCleared: 'Linien gelöscht',
+        nextPiece: 'Nächster Block',
+        holdPiece: 'Gehaltener Block',
+        speed: 'Fallgeschwindigkeit'
+    },
+    snake: {
+        controls: 'Steuerung',
+        movement: 'Benutze Pfeiltasten oder WASD zum Bewegen',
+        foodEaten: 'Futter gefressen',
+        length: 'Schlangenlänge',
+        speed: 'Geschwindigkeit',
+        gameMode: 'Spielmodus',
+        classic: 'Klassisch',
+        timeAttack: 'Zeitangriff',
+        survival: 'Überleben'
+    },
+    error: {
+        notFound: 'Seite nicht gefunden',
+        backToHome: 'Zur Startseite',
+        gameLoadFailed: 'Spiel konnte nicht geladen werden',
+        tryAgain: 'Erneut versuchen'
+    }
+}

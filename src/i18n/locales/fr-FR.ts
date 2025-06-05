@@ -1,0 +1,91 @@
+export default {
+    common: {
+        play: 'Play',
+        pause: 'Pause',
+        resume: 'Resume',
+        restart: 'Restart',
+        back: 'Back',
+        confirm: 'Confirm',
+        cancel: 'Cancel',
+        score: 'Score',
+        highScore: 'High Score',
+        level: 'Level',
+        time: 'Time',
+        gameOver: 'Game Over',
+        newGame: 'New Game',
+        settings: 'Settings',
+        language: 'Language',
+        theme: 'Theme',
+        sound: 'Sound',
+        music: 'Music'
+    },
+    home: {
+        title: 'Game Collection',
+        welcome: 'Welcome to Game Collection',
+        description: 'Classic games for casual entertainment anytime, anywhere',
+        startPlaying: 'Start Playing',
+        viewAllGames: 'View All Games',
+        popularGames: 'Popular Games',
+        recentlyPlayed: 'Recently Played'
+    },
+    games: {
+        title: 'All Games',
+        tetris: 'Tetris',
+        snake: 'Snake',
+        puzzle: 'Puzzle',
+        memory: 'Memory Game',
+        tetrisDesc: 'Classic block-clearing game',
+        snakeDesc: 'Control the snake to eat food and grow',
+        puzzleDesc: 'Assemble pieces into a complete picture',
+        memoryDesc: 'Flip cards to find matching pairs'
+    },
+    settings: {
+        title: 'Settings',
+        general: 'General',
+        appearance: 'Appearance',
+        audio: 'Audio',
+        language: 'Language',
+        selectLanguage: 'Select Language',
+        theme: 'Theme',
+        lightTheme: 'Light',
+        darkTheme: 'Dark',
+        autoTheme: 'Auto',
+        soundEffects: 'Sound Effects',
+        backgroundMusic: 'Background Music',
+        volume: 'Volume',
+        reset: 'Reset Settings',
+        resetConfirm: 'Are you sure you want to reset all settings?',
+        about: 'About',
+        version: 'Version'
+    },
+    tetris: {
+        controls: 'Controls',
+        moveLeft: 'Move Left: ← / A',
+        moveRight: 'Move Right: → / D',
+        rotate: 'Rotate: ↑ / W',
+        softDrop: 'Soft Drop: ↓ / S',
+        hardDrop: 'Hard Drop: Space',
+        pause: 'Pause: P / ESC',
+        linesCleared: 'Lines Cleared',
+        nextPiece: 'Next Piece',
+        holdPiece: 'Hold Piece',
+        speed: 'Drop Speed'
+    },
+    snake: {
+        controls: 'Controls',
+        movement: 'Use arrow keys or WASD to move',
+        foodEaten: 'Food Eaten',
+        length: 'Snake Length',
+        speed: 'Move Speed',
+        gameMode: 'Game Mode',
+        classic: 'Classic',
+        timeAttack: 'Time Attack',
+        survival: 'Survival'
+    },
+    error: {
+        notFound: 'Page Not Found',
+        backToHome: 'Back to Home',
+        gameLoadFailed: 'Failed to load game',
+        tryAgain: 'Try Again'
+    }
+}

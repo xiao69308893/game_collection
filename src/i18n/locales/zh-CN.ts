@@ -1,0 +1,91 @@
+export default {
+    common: {
+        play: '开始游戏',
+        pause: '暂停',
+        resume: '继续',
+        restart: '重新开始',
+        back: '返回',
+        confirm: '确认',
+        cancel: '取消',
+        score: '得分',
+        highScore: '最高分',
+        level: '等级',
+        time: '时间',
+        gameOver: '游戏结束',
+        newGame: '新游戏',
+        settings: '设置',
+        language: '语言',
+        theme: '主题',
+        sound: '音效',
+        music: '背景音乐'
+    },
+    home: {
+        title: '游戏集合',
+        welcome: '欢迎来到游戏集合',
+        description: '精选经典小游戏，随时随地轻松娱乐',
+        startPlaying: '开始游戏',
+        viewAllGames: '查看所有游戏',
+        popularGames: '热门游戏',
+        recentlyPlayed: '最近玩过'
+    },
+    games: {
+        title: '所有游戏',
+        tetris: '俄罗斯方块',
+        snake: '贪吃蛇',
+        puzzle: '拼图游戏',
+        memory: '记忆翻牌',
+        tetrisDesc: '经典的方块消除游戏',
+        snakeDesc: '控制蛇吃食物变长',
+        puzzleDesc: '将图片拼成完整的图案',
+        memoryDesc: '翻牌配对，考验记忆力'
+    },
+    settings: {
+        title: '设置',
+        general: '通用设置',
+        appearance: '外观',
+        audio: '音频',
+        language: '语言',
+        selectLanguage: '选择语言',
+        theme: '主题',
+        lightTheme: '浅色主题',
+        darkTheme: '深色主题',
+        autoTheme: '跟随系统',
+        soundEffects: '音效',
+        backgroundMusic: '背景音乐',
+        volume: '音量',
+        reset: '重置设置',
+        resetConfirm: '确定要重置所有设置吗？',
+        about: '关于',
+        version: '版本'
+    },
+    tetris: {
+        controls: '操作说明',
+        moveLeft: '左移: ← / A',
+        moveRight: '右移: → / D',
+        rotate: '旋转: ↑ / W',
+        softDrop: '加速下落: ↓ / S',
+        hardDrop: '直接下落: 空格',
+        pause: '暂停: P / ESC',
+        linesCleared: '消除行数',
+        nextPiece: '下一个方块',
+        holdPiece: '保留方块',
+        speed: '下落速度'
+    },
+    snake: {
+        controls: '操作说明',
+        movement: '使用方向键或WASD控制移动',
+        foodEaten: '已吃食物',
+        length: '蛇身长度',
+        speed: '移动速度',
+        gameMode: '游戏模式',
+        classic: '经典模式',
+        timeAttack: '限时模式',
+        survival: '生存模式'
+    },
+    error: {
+        notFound: '页面未找到',
+        backToHome: '返回首页',
+        gameLoadFailed: '游戏加载失败',
+        tryAgain: '重试'
+    }
+}
