@@ -1,0 +1,85 @@
+// pages.json - 页面配置
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "游戏集合",
+        "navigationBarBackgroundColor": "#3b82f6",
+        "navigationBarTextStyle": "white",
+        "backgroundColor": "#f8f9fa"
+      }
+    },
+    {
+      "path": "pages/games/index",
+      "style": {
+        "navigationBarTitleText": "所有游戏",
+        "navigationBarBackgroundColor": "#3b82f6",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/games/tetris",
+      "style": {
+        "navigationBarTitleText": "俄罗斯方块",
+        "navigationBarBackgroundColor": "#3b82f6",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/games/snake",
+      "style": {
+        "navigationBarTitleText": "贪吃蛇",
+        "navigationBarBackgroundColor": "#3b82f6",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/settings/index",
+      "style": {
+        "navigationBarTitleText": "设置",
+        "navigationBarBackgroundColor": "#3b82f6",
+        "navigationBarTextStyle": "white"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "Game Collection",
+    "navigationBarBackgroundColor": "#3b82f6",
+    "backgroundColor": "#f8f9fa",
+    "backgroundTextStyle": "dark",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#3b82f6",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "static/home.png",
+        "selectedIconPath": "static/home-active.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/games/index",
+        "iconPath": "static/games.png",
+        "selectedIconPath": "static/games-active.png",
+        "text": "游戏"
+      },
+      {
+        "pagePath": "pages/settings/index",
+        "iconPath": "static/settings.png",
+        "selectedIconPath": "static/settings-active.png",
+        "text": "设置"
+      }
+    ]
+  },
+  "condition": {
+    "current": 0,
+    "list": []
+  }
+}
+
